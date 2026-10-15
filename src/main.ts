@@ -44,8 +44,8 @@ const lemon = new Konva.Line({
   tension : 0.3,
   draggable: true,
 
-  offsetX: 500,
-  offsetY: 500
+  //offsetX: 500,
+  //offsetY: 500
   }
 );
 
@@ -77,12 +77,16 @@ lemon.on('mouseout', (e) => {
   
 });
 
-const period = 500;
 
-const animation = new Konva.Animation(function(frame){
-  const scale = Math.sin(frame.time*0.5*Math.PI/period)+2;
-  lemon.scale({x: scale, y: scale});
+
+const period = 900;    // ms for one full wiggle back and forth
+const amplitude = 10;  // max degrees each side
+
+const wiggle = new Konva.Animation((frame) => {
+  if (!frame) return;
+  lemon.rotation(amplitude * Math.sin((frame.time * 2 * Math.PI) / period));
 }, layer);
+
 
 const tween = new Konva.Tween({
   node: lemon,
@@ -97,12 +101,15 @@ lemon.on('pointerdown', (e) => {
   writeMessage('ASDUYHASKJFLSDHBFJDSFHDS');
   //animation.stop();
   tween.play();
+  wiggle.start()
+
 });
 
 lemon.on('pointerup', (e) => {
   writeMessage('ASDUYHASKJFLSDHBFJDSFHDS');
   //animation.stop();
   tween.reverse();
+  wiggle.stop()
 });
 
 // add the shape to the layer
